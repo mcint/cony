@@ -83,10 +83,10 @@ def cmd_help(term):
     commands = sorted(commands, key=lambda x: x[1])
 
     for cmd, names in commands:
-        names = ', '.join(names)
+        title = ', '.join(names)
         if cmd is cmd_fallback:
-            names += ' (default)'
-        items.append((names, cmd.__doc__))
+            title += ' (default)'
+        items.append({ 'name' : names[0], 'title' : title, 'doc' : cmd.__doc__ })
 
     return dict(items = items, title = u'Help — Cony')
 
@@ -141,8 +141,8 @@ _TEMPLATES = dict( # {{{
     help = """
     <dl class="help">
     %for item in items:
-        <dt>{{ item[0] }}</dt>
-        <dd>{{ item[1] }}</dt>
+        <dt><a href="?s={{ item['name'] }}">{{ item['title'] }}</a></dt>
+        <dd>{{ item['doc'] }}</dt>
     %end
     </dl>
 %rebase layout title='Help — Cony'
