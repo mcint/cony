@@ -157,14 +157,15 @@ the default "cmd_g" is used, doing a Google search. Similarly, if no
 `cmd_help` is defined, a default one will be used which shows the
 [docstrings][] of the commands.
 
-Default Cony's commands could be overridden or turned off. Too turn command
+Cony's default commands can be overridden or turned off. To turn a command
 off, just assign it none in your `local_settings.py`: `cmd_g = None`.
 
-Also, commands could be aliased: `cmd_tl = cmd_too_long`.
+Also, commands can be aliased: `cmd_tl = cmd_too_long`.
 
-For example, here is a simple `local_settings.py` config that uses the default
-"g", "p", but not "pypi" commands, uses the default fallback and help commands
-(as described above), and creates a "weather" command with an alias "w":
+For example, here is a simple `local_settings.py` config that uses the
+default "g", and "p", but not "pypi" commands, uses the default fallback
+and help commands (as described above), and creates a "weather" command
+with an alias "w":
 
     from bottle import redirect
 
