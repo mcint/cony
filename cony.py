@@ -26,7 +26,7 @@ SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 # Default commands
 ##################
 
-def rich_help(help_argument = None):
+def rich_help(help_argument = ''):
     '''Decorator for command functions to mark them as providing help,
     which causes the default cmd_help to link to them.  The optional
     `help_argument`, if set, is the argument passed to the linked command
@@ -95,14 +95,21 @@ def cmd_help(term):
 
     for cmd, names in commands:
         title = ', '.join(names)
-        has_rich_help = hasattr(cmd, 'rich_help')
-        rich_help_cmd = names[0] + ((' ' + cmd.rich_help)
-                if cmd.rich_help else '') if has_rich_help else None
         if cmd is cmd_fallback:
             title += ' (default)'
-        items.append({ 'name' : names[0], 'title' : title, 'doc' : cmd.__doc__,
+        has_rich_help = hasattr(cmd, 'rich_help')
+
+        data = {
+                'name' : names[0],
+                'title' : title,
+                'doc' : cmd.__doc__,
                 'has_rich_help' : has_rich_help,
-                'rich_help_cmd' : rich_help_cmd })
+                }
+
+        if has_rich_help:
+            data['rich_help_cmd'] = names[0] + (
+                    ' ' + rich_help if has_rich_help else '')
+        items.append(data)
 
     return dict(items = items, title = u'Help — Cony')
 
