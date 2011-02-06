@@ -27,14 +27,35 @@ SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 ##################
 
 def rich_help(help_argument = ''):
-    '''Decorator for command functions to mark them as providing help,
-    which causes the default cmd_help to link to them.  The optional
+    """Decorator for command functions to mark them as providing help.
+
+    It causes the default cmd_help to link to them. The optional
     `help_argument`, if set, is the argument passed to the linked command
-    for help.'''
-    def decorator(handler):
-        handler.rich_help = help_argument
-        return handler
-    return decorator
+    for help.
+
+    Usage:
+
+        @rich_help('help')
+        def cmd_some_command(term):
+            \"\"\"Short help\"\"\"
+            ...
+
+    or
+
+        @rich_help
+        def cmd_some_command(term):
+            \"\"\"Short help\"\"\"
+            ...
+    """
+    if callable(help_argument): # it means decorator was applied without args
+        func = help_argument
+        func.rich_help = ''
+        return func
+    else:
+        def decorator(handler):
+            handler.rich_help = help_argument
+            return handler
+        return decorator
 
 
 def cmd_g(term):
