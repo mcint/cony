@@ -168,6 +168,7 @@ and help commands (as described above), and creates a "weather" command
 with an alias "w":
 
     from bottle import redirect
+    from cony import rich_help
 
     #  local templates
     TEMPLATES = dict(
@@ -183,10 +184,11 @@ with an alias "w":
           """,
        )
 
+    @rich_help()
     def cmd_weather(term):
        '''Look up weather forecast in the specified location.'''
        examples = [ 'Moscow, Russia', 'Fort Collins, Colorado' ]
-       if term and term != 'help':
+       if term and term != '--help':
           redirect('http://weather.yahoo.com/search/weather?location=%s' % term)
        else:
           #  render the "weather" template defined above, pass "examples"
@@ -194,6 +196,12 @@ with an alias "w":
 
     cmd_w = cmd_weather
     cmd_pypi = None
+
+The `rich_help()` decorator causes the default `cmd_help` command to
+generate a clickable link to this command.  If a string argument is given,
+such as `rich_help('--help')`, then the link adds that argument to the
+command link.  This is meant so that you can have the main help page link
+to help pages for the individual commands.
 
 
 Contributors

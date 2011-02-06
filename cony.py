@@ -26,6 +26,17 @@ SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 # Default commands
 ##################
 
+def rich_help(help_argument = ''):
+    '''Decorator for command functions to mark them as providing help,
+    which causes the default cmd_help to link to them.  The optional
+    `help_argument`, if set, is the argument passed to the linked command
+    for help.'''
+    def decorator(handler):
+        handler.rich_help = help_argument
+        return handler
+    return decorator
+
+
 def cmd_g(term):
     """Google search."""
     redirect('http://www.google.com/search?q=%s' % term)
@@ -83,10 +94,22 @@ def cmd_help(term):
     commands = sorted(commands, key=lambda x: x[1])
 
     for cmd, names in commands:
-        names = ', '.join(names)
+        title = ', '.join(names)
         if cmd is cmd_fallback:
-            names += ' (default)'
-        items.append((names, cmd.__doc__))
+            title += ' (default)'
+        has_rich_help = hasattr(cmd, 'rich_help')
+
+        data = {
+                'name' : names[0],
+                'title' : title,
+                'doc' : cmd.__doc__,
+                'has_rich_help' : has_rich_help,
+                }
+
+        if has_rich_help:
+            data['rich_help_cmd'] = names[0] + (
+                    ' ' + rich_help if has_rich_help else '')
+        items.append(data)
 
     return dict(items = items, title = u'Help — Cony')
 
@@ -141,8 +164,14 @@ _TEMPLATES = dict( # {{{
     help = """
     <dl class="help">
     %for item in items:
-        <dt>{{ item[0] }}</dt>
-        <dd>{{ item[1] }}</dt>
+        <dt>
+        %if item['has_rich_help']:
+            <a href="?s={{ item['rich_help_cmd'] }}">{{ item['title'] }}</a></dt>
+        %else:
+            {{ item['title'] }}
+        %end
+        </dt>
+        <dd>{{ item['doc'] }}</dt>
     %end
     </dl>
 %rebase layout title='Help — Cony'
