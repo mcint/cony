@@ -86,6 +86,8 @@ def cmd_pypi(term):
 @rich_help('--help')
 def cmd_p(term):
     '''Python documentation search.'''
+    import urllib2
+
     if term == '--help' or term == '?' or term == '-?':
         return dict()
     elif not term:
