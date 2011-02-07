@@ -244,8 +244,9 @@ try:
     from local_settings import *
     if 'TEMPLATES' in locals():
         _TEMPLATES.update(TEMPLATES)
-except ImportError:
-    pass
+except ImportError, e:
+    if e.args[0] != 'cannot import name local_settings':
+        raise
 
 
 @route('/')
