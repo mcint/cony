@@ -27,14 +27,35 @@ SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 ##################
 
 def rich_help(help_argument = ''):
-    '''Decorator for command functions to mark them as providing help,
-    which causes the default cmd_help to link to them.  The optional
+    """Decorator for command functions to mark them as providing help.
+
+    It causes the default cmd_help to link to them. The optional
     `help_argument`, if set, is the argument passed to the linked command
-    for help.'''
-    def decorator(handler):
-        handler.rich_help = help_argument
-        return handler
-    return decorator
+    for help.
+
+    Usage:
+
+        @rich_help('help')
+        def cmd_some_command(term):
+            \"\"\"Short help\"\"\"
+            ...
+
+    or
+
+        @rich_help
+        def cmd_some_command(term):
+            \"\"\"Short help\"\"\"
+            ...
+    """
+    if callable(help_argument): # it means decorator was applied without args
+        func = help_argument
+        func.rich_help = ''
+        return func
+    else:
+        def decorator(handler):
+            handler.rich_help = help_argument
+            return handler
+        return decorator
 
 
 def cmd_g(term):
@@ -109,18 +130,18 @@ def cmd_help(term):
         title = ', '.join(names)
         if cmd is cmd_fallback:
             title += ' (default)'
-        has_rich_help = hasattr(cmd, 'rich_help')
 
-        data = {
-                'name' : names[0],
-                'title' : title,
-                'doc' : cmd.__doc__,
-                'has_rich_help' : has_rich_help,
-                }
+        data = dict(
+            name = names[0],
+            title = title,
+            doc = cmd.__doc__,
+            rich_help = None,
+        )
 
-        if has_rich_help:
-            data['rich_help_cmd'] = names[0] + (
-                    ' ' + rich_help if has_rich_help else '')
+        rich_help = getattr(cmd, 'rich_help', None)
+        if rich_help is not None:
+            data['rich_help'] = names[0] + ' ' + rich_help
+
         items.append(data)
 
     return dict(items = items, title = u'Help — Cony')
@@ -190,10 +211,10 @@ _TEMPLATES = dict( # {{{
     <dl class="help">
     %for item in items:
         <dt>
-        %if item['has_rich_help']:
-            <a href="?s={{ item['rich_help_cmd'] }}">{{ item['title'] }}</a></dt>
-        %else:
+        %if item['rich_help'] is None:
             {{ item['title'] }}
+        %else:
+            <a href="?s={{ item['rich_help'] }}">{{ item['title'] }}</a></dt>
         %end
         </dt>
         <dd>{{ item['doc'] }}</dt>
