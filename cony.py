@@ -62,9 +62,21 @@ def cmd_pypi(term):
     redirect('http://pypi.python.org/pypi?:action=search&term=%s&submit=search' % term)
 
 
+@rich_help('--help')
 def cmd_p(term):
-    """Python documentation search."""
-    redirect('http://docs.python.org/search.html?q=%s&check_keywords=yes&area=default' % term)
+    '''Python documentation search.'''
+    if term == '--help' or term == '?' or term == '-?':
+        return dict()
+    elif not term:
+        redirect('http://docs.python.org/library/index.html')
+    else:
+        try:
+            url = 'http://docs.python.org/dev/library/%s.html' % term
+            urllib2.urlopen(url)
+            redirect(url)
+        except urllib2.HTTPError:
+            redirect('http://docs.python.org/search.html?q=%s'
+                    '&check_keywords=yes&area=default' % term)
 
 
 def cmd_help(term):
@@ -160,6 +172,19 @@ _TEMPLATES = dict( # {{{
         </div>
     </body>
 </html>
+""",
+    p = """
+    <p />Search the Python documentation pages for the specified string.
+    If the term is:
+
+    <ul>
+        <li /><b>No arguments</b> -- Take you to the main Python
+                documentation library page.
+        <li /><b>Matches module name</b> -- Go directly to that
+                module's documentation page.
+        <li /><b>Otherwise</b> -- Passes the term on to the PyDoc search page.
+    </ul>
+%rebase layout title = 'PyDoc Help — Cony'
 """,
     help = """
     <dl class="help">
