@@ -3,6 +3,7 @@
 
 import sys
 import bottle
+import urllib2
 
 from bottle import SimpleTemplate, template
 from bottle import route, run, request, redirect
@@ -86,10 +87,22 @@ def cmd_pypi(term):
 @rich_help('--help')
 def cmd_p(term):
     '''Python documentation search.'''
-    import urllib2
 
     if term == '--help' or term == '?' or term == '-?':
-        return dict()
+        _template = """
+            <p>Search the Python documentation pages for the specified string.
+            If the term is:</p>
+
+            <ul>
+                <li><b>No arguments</b> — Take you to the main Python
+                        documentation library page.</li>
+                <li><b>Matches module name</b> — Go directly to that
+                        module's documentation page.</li>
+                <li><b>Otherwise</b> — Passes the term on to the PyDoc search page.</li>
+            </ul>
+        %rebase layout title = 'PyDoc Help — Cony'
+        """
+        return dict(template=_template)
     elif not term:
         redirect('http://docs.python.org/library/index.html')
     else:
@@ -146,7 +159,22 @@ def cmd_help(term):
 
         items.append(data)
 
-    return dict(items = items, title = u'Help — Cony')
+    _template = """
+        <dl class="help">
+        %for item in items:
+            <dt>
+            %if item['rich_help'] is None:
+                {{ item['title'] }}
+            %else:
+                <a href="?s={{ item['rich_help'] }}">{{ item['title'] }}</a></dt>
+            %end
+            </dt>
+            <dd>{{ item['doc'] }}</dt>
+        %end
+        </dl>
+    %rebase layout title='Help — Cony'
+    """
+    return dict(template=_template, items = items, title = u'Help — Cony')
 
 ########################
 # Templates related part
@@ -196,34 +224,6 @@ _TEMPLATES = dict( # {{{
     </body>
 </html>
 """,
-    p = """
-    <p />Search the Python documentation pages for the specified string.
-    If the term is:
-
-    <ul>
-        <li /><b>No arguments</b> -- Take you to the main Python
-                documentation library page.
-        <li /><b>Matches module name</b> -- Go directly to that
-                module's documentation page.
-        <li /><b>Otherwise</b> -- Passes the term on to the PyDoc search page.
-    </ul>
-%rebase layout title = 'PyDoc Help — Cony'
-""",
-    help = """
-    <dl class="help">
-    %for item in items:
-        <dt>
-        %if item['rich_help'] is None:
-            {{ item['title'] }}
-        %else:
-            <a href="?s={{ item['rich_help'] }}">{{ item['title'] }}</a></dt>
-        %end
-        </dt>
-        <dd>{{ item['doc'] }}</dt>
-    %end
-    </dl>
-%rebase layout title='Help — Cony'
-"""
 ) # }}}
 
 
