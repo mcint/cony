@@ -7,7 +7,7 @@ def cmd_voice(term):
 	'''Go to the Google Voice page.'''
 
 	template = """
-		<p />Go to the Google Voice inbox page.
+		<p>Go to the Google Voice inbox page.</p>
 
 		%rebase layout title = 'Voice Help'
 		"""

@@ -7,7 +7,7 @@ def cmd_reader(term):
 	'''Go to the Google Reader page.'''
 
 	template = """
-		<p />Go to the Google Reader inbox page.
+		<p>Go to the Google Reader inbox page.</p>
 
 		%rebase layout title = 'Reader Help'
 		"""
