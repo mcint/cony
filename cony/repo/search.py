@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import urllib2
 from bottle import redirect
-from cony.utils import rich_help
+from cony.utils import rich_help, HELP_TERMS
 
 
 def cmd_google(term):
@@ -50,11 +50,11 @@ def cmd_pypi(term):
     redirect('http://pypi.python.org/pypi?:action=search&term=%s&submit=search' % term)
 
 
-@rich_help('--help')
+@rich_help
 def cmd_python(term):
     '''Python documentation search.'''
 
-    if term == '--help' or term == '?' or term == '-?':
+    if term in HELP_TERMS:
         _template = """
             <p>Search the Python documentation pages for the specified string.
             If the term is:</p>
@@ -79,4 +79,33 @@ def cmd_python(term):
         except urllib2.HTTPError:
             redirect('http://docs.python.org/search.html?q=%s'
                     '&check_keywords=yes&area=default' % term)
+
+
+@rich_help
+def cmd_wikipedia(term):
+    '''Wikipedia page search.'''
+
+    template = """
+        <p>Search Wikipedia for the given term.  If no term is specified,
+        the home page is opened.  Otherwise, the term is searched for on
+        Wikipedia, which may result in a redirect to an exact page match,
+        or to a list of search results.
+        </p>
+
+        <p>If the term "slash" (/) followed by one of the language-specific
+        Wikipedia sub-sites, such as "/en" or "/ru", go directly to that
+        page.</p>
+
+        %rebase layout title = 'Wikipedia Help'
+        """
+
+    if term in HELP_TERMS:
+        return dict(template = template)
+    elif not term:
+        redirect('http://www.wikipedia.org/')
+    elif term[0] == '/' and len(term) == 3:
+        redirect('http://%s.wikipedia.org/' % term[1:])
+    else:
+        redirect('http://www.wikipedia.org/w/index.php?search=%s'
+                % term.replace(' ', '+'))
 

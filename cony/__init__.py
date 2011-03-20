@@ -22,6 +22,7 @@ SERVER_MODE = 'STANDALONE' # or 'WSGI', or 'CGI'
 SERVER_PORT = 8080
 SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 
+HELP_TERMS = ('--help', '?', '-?')
 
 ##################
 # Default commands
