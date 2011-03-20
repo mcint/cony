@@ -9,6 +9,11 @@ def cmd_google(term):
     redirect('http://www.google.com/search?q=%s' % term)
 
 
+def cmd_yandex(term):
+    """Yandex search."""
+    redirect('http://yandex.ru/yandsearch?text=%s' % term)
+
+
 def cmd_fl(term):
     """Search among Flickr photos under Creative Commons license."""
     redirect('http://www.flickr.com/search/?q=%s&l=cc&ss=0&ct=0&mt=all&w=all&adv=1' % term)
