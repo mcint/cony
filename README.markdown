@@ -12,7 +12,7 @@ What the difference between Cony and Bunny1?
   micro web framework without dependencies.
 * Cony could be easily extended. You have no need to inherit any classes like
   you do with Bunny1. With Cony, you place your commands in a separate
-  file and fire `./cony.py`.
+  file and fire `./cony-server`.
 
 Introduction
 ------------
@@ -51,16 +51,19 @@ Installation
 
 Ways to install Cony:
 
-* Just clone the repository and to run `./cony.py`.
-* `easy_install cony; cony.py`
-* `pip install cony; cony.py`
+* Just clone the repository and to run `./cony-server`.
+* `easy_install cony; cony-server`
+* `pip install cony; cony-server`
 
 Now you have server up and running. It binds to the localhost:8080 by
 default. Open the <http://localhost:8080> in your browser to see the help.
 
-You can configure Cony by editing the top of "cony.py" and looking for the
-"SERVER_*" entries.  These can be adjusted to change the port, change what
-interface is bound to (use '' to bind to all interfaces).
+You can configure Cony by overwriting `SERVER_*` variables in your
+`local_settings.py` file. Your could define:
+
+    SERVER_MODE = 'STANDALONE' # or 'WSGI', or 'CGI'
+    SERVER_PORT = 8080
+    SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 
 You can also configure CGI or WSGI modes if you want to integrate this into
 an existing web server such as Apache.
@@ -73,7 +76,7 @@ Create "local_settings.py" which contains:
 
 In your Apache configuration, add:
 
-    ScriptAlias /cony/ /path/to/cony.py
+    ScriptAlias /cony/ /path/to/cony-server
 
 Re-start Apache and you should now be able to use
 "http://servername/cony/?s=%s" as the Cony URL in your browser
@@ -91,7 +94,7 @@ mod_wsgi").
 In your Apache configuration, add:
 
     WSGIPythonPath /path/to/cony/directory
-    WSGIScriptAlias /cony/ /path/to/cony/directory/cony.py
+    WSGIScriptAlias /cony/ /path/to/cony/directory/cony-server
 
 Re-start Apache and you should now be able to use
 "http://servername/cony/?s=%s" as the Cony URL in your browser
@@ -203,6 +206,15 @@ such as `rich_help('--help')`, then the link adds that argument to the
 command link.  This is meant so that you can have the main help page link
 to help pages for the individual commands.
 
+Contributing
+------------
+
+There are many commands in `cony.repo` submodule. To plug them all,
+do `from cony.repo import *` or import only those you need for.
+
+If you wrote a command, useful to other users, [fork this project][GitHub] on a
+GitHub and add you command somewhere in the `cony.repo` submodule. Then send me
+a pull request.
 
 Contributors
 ------------
@@ -210,6 +222,7 @@ Contributors
 * Alexander Artemenko (author)
 * Sean Reifschneider
 
+[GitHub]: http://github.com/svetlyak40wt/cony
 [smart-bm]: http://en.wikipedia.org/wiki/Smart_bookmark
 [bunny1]: https://github.com/facebook/bunny1
 [Keywurl]: http://alexstaubo.github.com/keywurl/

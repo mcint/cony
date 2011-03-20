@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cony",
-    version="0.2.0",
+    version="0.2.1",
     description=(
         '"Cony" is a tool to write smart bookmarks in '
         'python and to share them across all your browsers and with a '
@@ -26,6 +26,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Server',
     ],
     packages=find_packages(),
-    scripts=['cony.py'],
+    scripts=['cony-server'],
     install_requires = ['bottle'],
 )

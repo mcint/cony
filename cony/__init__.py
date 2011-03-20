@@ -3,11 +3,11 @@
 
 import sys
 import bottle
-import urllib2
 
 from bottle import SimpleTemplate, template
-from bottle import route, run, request, redirect
+from bottle import route, run, request
 from itertools import groupby
+
 
 ################
 #  CONFIGURATION
@@ -26,93 +26,10 @@ SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 ##################
 # Default commands
 ##################
-
-def rich_help(help_argument = ''):
-    """Decorator for command functions to mark them as providing help.
-
-    It causes the default cmd_help to link to them. The optional
-    `help_argument`, if set, is the argument passed to the linked command
-    for help.
-
-    Usage:
-
-        @rich_help('help')
-        def cmd_some_command(term):
-            \"\"\"Short help\"\"\"
-            ...
-
-    or
-
-        @rich_help
-        def cmd_some_command(term):
-            \"\"\"Short help\"\"\"
-            ...
-    """
-    if callable(help_argument): # it means decorator was applied without args
-        func = help_argument
-        func.rich_help = ''
-        return func
-    else:
-        def decorator(handler):
-            handler.rich_help = help_argument
-            return handler
-        return decorator
-
-
-def cmd_g(term):
-    """Google search."""
-    redirect('http://www.google.com/search?q=%s' % term)
-
+from cony.repo.search import cmd_google as cmd_g
+from cony.repo.search import cmd_python as cmd_p
+from cony.repo.search import cmd_pypi
 cmd_fallback = cmd_g
-
-
-def cmd_pypi(term):
-    """Python package index search.
-
-    If there is exact match, then redirects right to the package's page.
-    """
-    import urllib
-    try:
-        direct_url = 'http://pypi.python.org/pypi/%s/' % term
-        result = urllib.urlopen(direct_url)
-    except Exception, e:
-        pass
-    else:
-        if result.code == 200:
-            redirect(direct_url)
-
-    redirect('http://pypi.python.org/pypi?:action=search&term=%s&submit=search' % term)
-
-
-@rich_help('--help')
-def cmd_p(term):
-    '''Python documentation search.'''
-
-    if term == '--help' or term == '?' or term == '-?':
-        _template = """
-            <p>Search the Python documentation pages for the specified string.
-            If the term is:</p>
-
-            <ul>
-                <li><b>No arguments</b> — Take you to the main Python
-                        documentation library page.</li>
-                <li><b>Matches module name</b> — Go directly to that
-                        module's documentation page.</li>
-                <li><b>Otherwise</b> — Passes the term on to the PyDoc search page.</li>
-            </ul>
-        %rebase layout title = 'PyDoc Help — Cony'
-        """
-        return dict(template=_template)
-    elif not term:
-        redirect('http://docs.python.org/library/index.html')
-    else:
-        try:
-            url = 'http://docs.python.org/dev/library/%s.html' % term
-            urllib2.urlopen(url)
-            redirect(url)
-        except urllib2.HTTPError:
-            redirect('http://docs.python.org/search.html?q=%s'
-                    '&check_keywords=yes&area=default' % term)
 
 
 def cmd_help(term):
@@ -175,6 +92,7 @@ def cmd_help(term):
     %rebase layout title='Help — Cony'
     """
     return dict(template=_template, items = items, title = u'Help — Cony')
+
 
 ########################
 # Templates related part
@@ -244,8 +162,9 @@ try:
     from local_settings import *
     if 'TEMPLATES' in locals():
         _TEMPLATES.update(TEMPLATES)
-except ImportError:
-    pass
+except ImportError, e:
+    if 'local_settings' not in e.message:
+        raise
 
 
 @route('/')
@@ -280,12 +199,14 @@ def do_command():
         return result
 
 
-bottle.debug(DEBUG)
+def wsgi():
+    bottle.debug(DEBUG)
+    return bottle.app()
 
-if SERVER_MODE == 'WSGI':
-    application = bottle.app()
 
-elif __name__ == '__main__':
+def main():
+    bottle.debug(DEBUG)
+
     if SERVER_MODE == 'STANDALONE':
         run(
             reloader=DEBUG,
@@ -298,3 +219,4 @@ elif __name__ == '__main__':
         print 'Wrong SERVER_MODE=%r defined for running from command-line' % (SERVER_MODE,)
         sys.exit(1)
     sys.exit(0)
+
