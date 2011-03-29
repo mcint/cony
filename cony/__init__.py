@@ -177,9 +177,10 @@ def do_command():
     command_name = tokens[0]
     term = len(tokens) == 2 and tokens[1] or ''
 
-    command = globals().get('cmd_' + command_name, cmd_fallback)
+    command = globals().get('cmd_' + command_name, None)
 
-    if command is cmd_fallback:
+    if command is None:
+        command = cmd_fallback
         term = search_string
 
     result = command(term)
