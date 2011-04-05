@@ -32,6 +32,11 @@ def cmd_dj(term):
     )
 
 
+def cmd_android(term):
+    """Search app in Adroid Market"""
+    redirect('https://market.android.com/search?q=%s&c=apps' % term)
+
+
 def cmd_pypi(term):
     """Python package index search.
 
