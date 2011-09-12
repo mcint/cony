@@ -8,3 +8,4 @@ dist/
 local_settings.py
 .vim/ide.session
 build
+.commands

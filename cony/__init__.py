@@ -172,6 +172,7 @@ except ImportError, e:
 def do_command():
     """Runs a command"""
     search_string = request.GET.get('s', 'help')
+    search_string = search_string.decode('utf-8')
 
     tokens = search_string.split(' ', 1)
     command_name = tokens[0]

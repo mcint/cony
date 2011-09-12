@@ -17,14 +17,14 @@ cmd_tr = cmd_translate
 
 
 def cmd_save_word(term):
-    """Saves word and it's translation into the  ~/.words/YYYY-MM-DD.txt
+    """Saves word and it's translation into the  ~/.words.csv
 
     These files could be used to import words into the FlashCards ToGo.
     """
     if ';' not in term:
         return cmd_search_word(term)
 
-    filename = datetime.datetime.now().strftime('~/.words/%Y-%m-%d.txt')
+    filename = '~/.words.csv'
 
     template = """
     <p>Translation "{{ word }}" was saved to %s</p>
@@ -62,9 +62,11 @@ def cmd_search_word(term):
     variants = {}
 
     for i in reversed(range((len(term) + 1) / 2, len(term) + 1)):
-        url = 'http://suggest-slovari.yandex.ru/suggest-lingvo?v=2&lang=en&part=%s' % term[:i]
+        url = 'http://suggest-slovari.yandex.ru/suggest-lingvo?v=2&lang=en&' + \
+                urllib.urlencode(dict(part=term[:i].encode('utf-8')))
         data = urllib.urlopen(url).read()
         data = simplejson.loads(data)
+
         if data[0]:
             for trans, link in zip(*data[1:]):
                 en, ru = trans.split(' - ', 1)
