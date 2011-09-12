@@ -7,11 +7,11 @@ from bottle import redirect
 
 def cmd_translate(term):
     """Translates the text using Google Translate."""
-    if len(term.decode('utf-8')) < len(term):
+    if len(term) < len(term.encode('utf-8')):
         direction = 'ru|en'
     else:
         direction = 'en|ru'
-    redirect('http://translate.google.com/#%s|%s' % (direction, term))
+    redirect('http://translate.google.com/#%s|%s' % (direction, term.encode('utf-8')))
 
 cmd_tr = cmd_translate
 
@@ -38,7 +38,7 @@ def cmd_save_word(term):
         os.mkdir(dirname)
 
     with open(filename, 'a+') as f:
-        f.write(term)
+        f.write(term.encode('utf-8'))
         f.write('\n')
     return dict(template=template, word=term)
 

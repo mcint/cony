@@ -6,17 +6,17 @@ from cony.utils import rich_help, HELP_TERMS
 
 def cmd_google(term):
     """Google search."""
-    redirect('http://www.google.com/search?q=%s' % term)
+    redirect('http://www.google.com/search?q=%s' % term.encode('utf-8'))
 
 
 def cmd_yandex(term):
     """Yandex search."""
-    redirect('http://yandex.ru/yandsearch?text=%s' % term)
+    redirect('http://yandex.ru/yandsearch?text=%s' % term.encode('utf-8'))
 
 
 def cmd_fl(term):
     """Search among Flickr photos under Creative Commons license."""
-    redirect('http://www.flickr.com/search/?q=%s&l=cc&ss=0&ct=0&mt=all&w=all&adv=1' % term)
+    redirect('http://www.flickr.com/search/?q=%s&l=cc&ss=0&ct=0&mt=all&w=all&adv=1' % term.encode('utf-8'))
 
 
 def cmd_pep(term):
@@ -28,13 +28,13 @@ def cmd_dj(term):
     """Django documentation search."""
     redirect(
         'http://docs.djangoproject.com/en/dev/search/?cx=009763561546736975936:e88ek0eurf4&'
-        'cof=FORID:11&q=%s&siteurl=docs.djangoproject.com/en/dev/topics/db/models/' % term
+        'cof=FORID:11&q=%s&siteurl=docs.djangoproject.com/en/dev/topics/db/models/' % term.encode('utf-8')
     )
 
 
 def cmd_android(term):
     """Search app in Adroid Market"""
-    redirect('https://market.android.com/search?q=%s&c=apps' % term)
+    redirect('https://market.android.com/search?q=%s&c=apps' % term.encode('utf-8'))
 
 
 def cmd_pypi(term):
@@ -44,7 +44,7 @@ def cmd_pypi(term):
     """
     import urllib
     try:
-        direct_url = 'http://pypi.python.org/pypi/%s/' % term
+        direct_url = 'http://pypi.python.org/pypi/%s/' % term.encode('utf-8')
         result = urllib.urlopen(direct_url)
     except Exception, e:
         pass
@@ -52,7 +52,7 @@ def cmd_pypi(term):
         if result.code == 200:
             redirect(direct_url)
 
-    redirect('http://pypi.python.org/pypi?:action=search&term=%s&submit=search' % term)
+    redirect('http://pypi.python.org/pypi?:action=search&term=%s&submit=search' % term.encode('utf-8'))
 
 
 @rich_help
@@ -78,12 +78,12 @@ def cmd_python(term):
         redirect('http://docs.python.org/library/index.html')
     else:
         try:
-            url = 'http://docs.python.org/dev/library/%s.html' % term
+            url = 'http://docs.python.org/dev/library/%s.html' % term.encode('utf-8')
             urllib2.urlopen(url)
             redirect(url)
         except urllib2.HTTPError:
             redirect('http://docs.python.org/search.html?q=%s'
-                    '&check_keywords=yes&area=default' % term)
+                    '&check_keywords=yes&area=default' % term.encode('utf-8'))
 
 
 @rich_help
