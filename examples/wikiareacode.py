@@ -28,5 +28,5 @@ def cmd_areacode(term):
 	elif not term:
 		redirect('http://en.wikipedia.org/wiki/List_of_NANP_area_codes')
 	else:
-		url = 'http://en.wikipedia.org/wiki/Area_code_720%s' % term
+		url = 'http://en.wikipedia.org/wiki/Area_code_%s' % term
 		redirect(url)
