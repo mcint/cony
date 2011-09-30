@@ -6,3 +6,4 @@ dist/
 .*.swo
 *.pyc
 local_settings.py
+.vim/ide.session
