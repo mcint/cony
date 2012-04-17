@@ -13,6 +13,7 @@ def production():
     env.environment = 'production'
     env.project_dir = '/home/art/projects/cony'
     env.repository = 'git@github.com:svetlyak40wt/cony.git'
+    use_ssh_config(env)
 
 
 def _pull_sources():
@@ -22,7 +23,7 @@ def _pull_sources():
         with cd(base_dir):
             if dir_exists(relative_project_dir):
                 with cd(relative_project_dir):
-                    run('git pull')
+                    run('git pull', forward_agent=True)
             else:
                 run('git clone %s %s' % (env.repository, relative_project_dir))
 
@@ -38,10 +39,13 @@ def deploy():
     package_ensure([
         'nginx',
     ])
-    dir_ensure('/home/art/log/backend')
-    dir_ensure('/home/art/log/nginx')
+    dir_ensure([
+        '/home/art/log/backend',
+        '/home/art/log/supervisord',
+        '/home/art/projects',
+    ])
 
-    _pull_source()
+    _pull_sources()
     _create_env()
     make_symlinks()
 
