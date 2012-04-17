@@ -19,7 +19,7 @@ from itertools import groupby
 DEBUG = True
 #  Stand-alone server running as a daemon on port 8080
 SERVER_MODE = 'STANDALONE' # or 'WSGI', or 'CGI'
-SERVER_PORT = 8080
+SERVER_PORT = 10001
 SERVER_HOST = 'localhost'  # or '' to allow on all interfaces
 
 HELP_TERMS = ('--help', '?', '-?')

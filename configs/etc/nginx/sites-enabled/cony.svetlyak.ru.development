@@ -1,0 +1,26 @@
+upstream dev_cony_server {
+    server 127.0.0.1:10001 fail_timeout=0;
+}
+
+server {
+    listen 8000;
+    server_name dev.cony.svetlyak.ru;
+    access_log /home/art/log/nginx/dev.cony.svetlyak.ru.log;
+
+    # path for static files
+    root /vagrant/cony;
+
+    location / {
+        # checks for static file, if not found proxy to app
+        try_files $uri @proxy_to_app;
+    }
+
+    location @proxy_to_app {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+
+        proxy_pass   http://dev_cony_server;
+    }
+}
+

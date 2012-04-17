@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import urllib
 import urllib2
 from bottle import redirect
 from cony.utils import rich_help, HELP_TERMS
@@ -111,6 +112,7 @@ def cmd_wikipedia(term):
     elif term[0] == '/' and len(term) == 3:
         redirect('http://%s.wikipedia.org/' % term[1:])
     else:
-        redirect('http://www.wikipedia.org/w/index.php?search=%s'
-                % term.replace(' ', '+'))
+        #redirect('http://www.wikipedia.org/w/index.php?' + query)
+        url = 'http://www.wikipedia.org/w/index.php?' + urllib.urlencode(dict(search=term.encode('utf-8')))
+        redirect(url)
 

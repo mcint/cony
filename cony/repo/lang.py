@@ -2,11 +2,14 @@
 import datetime
 import os.path
 import urllib
+from requests.sessions import Session
 
 from bottle import redirect
+from cony.utils import force_str
 from xml.etree import ElementTree as ET
 
 xhtml = '{http://www.w3.org/1999/xhtml}'
+
 
 def cmd_translate(term):
     """Translates the text using Google Translate."""
@@ -80,11 +83,13 @@ def cmd_search_word(term):
 
     variants = {}
 
+    internet = Session()
+
     for i in reversed(range((len(term) + 1) / 2, len(term) + 1)):
         url = 'http://suggest-slovari.yandex.ru/suggest-lingvo?v=2&lang=en&' + \
                 urllib.urlencode(dict(part=term[:i].encode('utf-8')))
-        data = urllib.urlopen(url).read()
-        data = simplejson.loads(data)
+        response = internet.get(url)
+        data = simplejson.loads(response.content)
 
         if data[0]:
             for trans, link in zip(*data[1:]):
@@ -95,10 +100,10 @@ def cmd_search_word(term):
 
 
     def get_spelling(value):
-        url = 'http://lingvo.yandex.ru/' + value['en'].replace(' ', '%20') + '/%D1%81%20%D0%B0%D0%BD%D0%B3%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%BE%D0%B3%D0%BE/'
-        data = urllib.urlopen(url).read()
+        url = 'http://lingvo.yandex.ru/' + force_str(value['en']).replace(' ', '%20') + '/%D1%81%20%D0%B0%D0%BD%D0%B3%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%BE%D0%B3%D0%BE/'
+        data = internet.get(url).content
 
-        xml = ET.fromstring(data)
+        xml = ET.fromstring(force_str(data))
         transcript = xml.find('*//{x}span[@class="b-translate__tr"]'.format(x=xhtml))
 
         if transcript is None:

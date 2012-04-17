@@ -32,3 +32,7 @@ def rich_help(help_argument = ''):
         return decorator
 
 
+def force_str(value, enc='utf-8'):
+    if isinstance(value, unicode):
+        return value.encode(enc)
+    return value
