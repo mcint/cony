@@ -1,0 +1,18 @@
+server {
+    listen 80;
+    server_name cony.svetlyak.ru cony2.svetlyak.ru;
+    access_log /home/art/log/nginx/cony.svetlyak.ru.log;
+
+    # path for static files
+    root /home/art/projects/cony;
+
+    location / {
+        # checks for static file, if not found proxy to app
+        try_files @gunicorn $uri;
+    }
+
+    location @gunicorn {
+        proxy_pass   http://127.0.0.1:40001;
+    }
+}
+
