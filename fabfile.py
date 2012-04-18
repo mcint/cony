@@ -27,6 +27,9 @@ def _pull_sources():
             else:
                 run('git clone %s %s' % (env.repository, relative_project_dir))
 
+            with cd(relative_project_dir):
+                fabric.operations.put('local_settings.py', 'local_settings.py')
+
 
 def _create_env():
     with cd(env.project_dir):
