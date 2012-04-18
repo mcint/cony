@@ -8,11 +8,7 @@ server {
 
     location / {
         # checks for static file, if not found proxy to app
-        try_files @gunicorn $uri;
-    }
-
-    location @gunicorn {
-        proxy_pass   http://127.0.0.1:40001;
+        proxy_pass   http://unix:/tmp/cony.svetlyak.ru.socket;
     }
 }
 
