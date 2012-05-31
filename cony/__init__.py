@@ -79,6 +79,12 @@ def cmd_help(term):
 
     _template = """
         <dl class="help">
+            <dt>try</dt>
+            <dd>
+                <form action="" method="GET">
+                    <input name="s" value="" />
+                </form>
+            </dd>
         %for item in items:
             <dt>
             %if item['rich_help'] is None:
