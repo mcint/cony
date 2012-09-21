@@ -1,6 +1,6 @@
 from fabricant import *
 
-#env.project = 'cony.svetlyak.ru'
+env.project = 'cony.svetlyak.ru'
 
 def dev():
     env.hosts = ['localhost']
@@ -58,3 +58,24 @@ def deploy():
 def runserver():
     local('./cony-server')
 
+
+def sctl(command, program=None):
+    require('project', provided_by=['dev', 'production'])
+    run(
+        'supervisorctl {command} {program}'.format(
+            command=command,
+            program=env.project if program is None else program
+        )
+    )
+
+def restart(program=None):
+    sctl('restart', program)
+
+def stop(program=None):
+    sctl('stop', program)
+
+def start(program=None):
+    sctl('start', program)
+
+def status(program=None):
+    sctl('status', program)
