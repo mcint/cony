@@ -227,3 +227,7 @@ Contributors
 [bunny1]: https://github.com/facebook/bunny1
 [Keywurl]: http://alexstaubo.github.com/keywurl/
 [docstrings]: http://en.wikipedia.org/wiki/Docstring#Python
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/svetlyak40wt/cony/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
