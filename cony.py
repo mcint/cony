@@ -3,7 +3,7 @@
 
 import sys
 import bottle
-import urllib2
+import urllib.request
 
 from bottle import SimpleTemplate, template
 from bottle import route, run, request, redirect
@@ -74,8 +74,8 @@ def cmd_pypi(term):
     import urllib
     try:
         direct_url = 'http://pypi.python.org/pypi/%s/' % term
-        result = urllib.urlopen(direct_url)
-    except Exception, e:
+        result = urllib.request.urlopen(direct_url)
+    except Exception as e:
         pass
     else:
         if result.code == 200:
@@ -108,9 +108,9 @@ def cmd_p(term):
     else:
         try:
             url = 'http://docs.python.org/dev/library/%s.html' % term
-            urllib2.urlopen(url)
+            urllib.request.urlopen(url)
             redirect(url)
-        except urllib2.HTTPError:
+        except urllib.request.HTTPError:
             redirect('http://docs.python.org/search.html?q=%s'
                     '&check_keywords=yes&area=default' % term)
 
@@ -121,7 +121,7 @@ def cmd_help(term):
 
     # functions should be sorted by value
     # because we will group them lately
-    functions = sorted(globals().items(), key=lambda x: x[1])
+    functions = sorted(globals().items(), key=lambda x: str(x[1]))
 
     commands = (
         (cmd, name)
@@ -175,6 +175,8 @@ def cmd_help(term):
     %rebase layout title='Help — Cony'
     """
     return dict(template=_template, items = items, title = u'Help — Cony')
+
+cmd_fallback = cmd_help
 
 ########################
 # Templates related part
@@ -244,7 +246,7 @@ try:
     from local_settings import *
     if 'TEMPLATES' in locals():
         _TEMPLATES.update(TEMPLATES)
-except ImportError, e:
+except ImportError as e:
     if e.args[0] != 'cannot import name local_settings':
         raise
 
@@ -296,6 +298,6 @@ elif __name__ == '__main__':
     elif SERVER_MODE == 'CGI':
         run(server=bottle.CGIServer)
     else:
-        print 'Wrong SERVER_MODE=%r defined for running from command-line' % (SERVER_MODE,)
+        print('Wrong SERVER_MODE=%r defined for running from command-line' % (SERVER_MODE,))
         sys.exit(1)
     sys.exit(0)
